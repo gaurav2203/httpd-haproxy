@@ -1,0 +1,23 @@
+---
+# tasks file for httpd
+
+- name: "installing the packages"
+  package:
+    name: "{{item}}"
+    state: present
+  loop:
+  - httpd
+  - php
+- name: "Copying the webpage"
+  template:
+    src: index.php.j2
+    dest: "/var/www/html/index.php"
+- name: "Copying essential"
+  template:
+    src: index.html.j2
+    dest: "/var/www/html/index.html"
+- name: "Starting the service"
+  service:
+    name: httpd
+    state: started
+

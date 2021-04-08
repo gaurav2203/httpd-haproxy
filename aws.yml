@@ -1,0 +1,27 @@
+- hosts: localhost
+  vars_files: "/etc/ansible/aws_key.yml"
+  tasks:
+  - name: "Creating a new ec2"
+    ec2:
+      key_name: "awsKey"
+      instance_type: "t2.micro"
+      image: "ami-0742b4e673072066f"
+      wait: yes
+      count: 1
+      instance_tags: 
+        Name: aws_ansible_ec2
+      vpc_subnet_id: "subnet-7308a02c"
+      assign_public_ip: yes
+      region: "us-east-1"
+      state: present
+      group_id: "sg-02f9283bb66f4a8a9"
+      aws_access_key: "{{ Access_key }}"
+      aws_secret_key: "{{ Secret_key }}"
+    register: ec2
+  - debug:
+      var: ec2.instances[0].public_ip
+  - blockinfile:
+      path: "/etc/ansible/NEW/ip"
+      block: |
+        [web]
+        "{{ ec2.instances[0].public_ip }}"
